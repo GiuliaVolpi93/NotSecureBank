@@ -12,6 +12,7 @@
     <td valign="top" colspan="3" class="bb">
 		<%		
 		java.lang.String content = request.getParameter("content");
+		content=Paths.get(content).normalize().toString();
 		if (content == null)
 			content = "default.htm";
 		else
