@@ -272,7 +272,7 @@ public class ServletUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie c : cookies) {
                 if ("preApprovedForGoldVisa".equals(c.getName()) && "true".equals(c.getValue())) {
-                    isPreApprovedForGoldVisa = true;
+                    isPreApprovedForGoldVisa = false;
                     break;
                 }
             }
