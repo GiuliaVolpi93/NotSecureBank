@@ -13,6 +13,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
+import org.owasp.esapi.ESAPI;
 
 import com.notsecurebank.model.Feedback;
 import com.notsecurebank.util.OperationsUtil;
@@ -50,19 +51,25 @@ public class FeedbackAPI extends NotSecureBankAPI {
             if (!isAlphanumeric(name)) {
                 throw new IllegalArgumentException("Name should contain only alphanumeric characters");
             }
+            name = ESAPI.encoder().encodeForHTML(name);
+
             email = (String) myJson.get("email");
             if (!isValidEmail(email)) {
                 throw new IllegalArgumentException("Invalid email format");
             }
+            email = ESAPI.encoder().encodeForHTML(email);
 
             subject = (String) myJson.get("subject");
             if (!isAlphanumeric(subject)) {
                 throw new IllegalArgumentException("Subject should contain only alphanumeric characters");
             }
+            subject = ESAPI.encoder().encodeForHTML(subject);
+
             comments = (String) myJson.get("message");
             if (!isValidMessage(comments)) {
                 throw new IllegalArgumentException("Invalid message format");
             }
+            comments = ESAPI.encoder().encodeForHTML(comments);
         } catch (JSONException e) {
             LOG.error(e.toString());
             return Response.status(400).entity("{\"Error\": \"Body does not contain all the correct attributes\"}").build();
