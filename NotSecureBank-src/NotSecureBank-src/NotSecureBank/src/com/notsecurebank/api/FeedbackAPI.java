@@ -44,14 +44,31 @@ public class FeedbackAPI extends NotSecureBankAPI {
         String subject;
         String comments;
 
+
         try {
             name = (String) myJson.get("name");
+            if (!isAlphanumeric(name)) {
+                throw new IllegalArgumentException("Name should contain only alphanumeric characters");
+            }
             email = (String) myJson.get("email");
+            if (!isValidEmail(email)) {
+                throw new IllegalArgumentException("Invalid email format");
+            }
+
             subject = (String) myJson.get("subject");
+            if (!isAlphanumeric(subject)) {
+                throw new IllegalArgumentException("Subject should contain only alphanumeric characters");
+            }
             comments = (String) myJson.get("message");
+            if (!isValidMessage(comments)) {
+                throw new IllegalArgumentException("Invalid message format");
+            }
         } catch (JSONException e) {
             LOG.error(e.toString());
             return Response.status(400).entity("{\"Error\": \"Body does not contain all the correct attributes\"}").build();
+        } catch (IllegalArgumentException e) {
+            LOG.error(e.toString());
+            return Response.status(400).entity("{\"Error\": \"" + e.getMessage() + "\"}").build();
         }
 
         String feedbackId = OperationsUtil.sendFeedback(name, email, subject, comments);
@@ -87,6 +104,24 @@ public class FeedbackAPI extends NotSecureBankAPI {
 
         return Response.status(200).entity(response).build();
 
+    }
+
+    public boolean isAlphanumeric(String str) {
+        Pattern pattern = Pattern.Pattern.compile("^[a-zA-Z]+$");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.matches();
+    }
+
+    public boolean isValidEmail(String email) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    public boolean isValidMessage(String message) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9\\s\\p{Punct}&&[^<>]]+$");
+        Matcher matcher = messagePattern.matcher(message);
+        return matcher.matches();
     }
 
 }
